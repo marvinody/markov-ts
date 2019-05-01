@@ -70,7 +70,7 @@ class Markov {
     }
     return list.map(v => v.value).join(' ');
   }
-  v
+
 }
 
 const markovify = (corpus: string, state: Number): Markov => {
