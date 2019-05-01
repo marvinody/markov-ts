@@ -1,19 +1,13 @@
 import db from './db';
 import { Vertex } from './graph';
-console.log('included');
 class Markov {
-  nodes: object;
   state: Number;
   principalNode: Vertex;
   terminalNode: Vertex;
   constructor(state) {
-    this.nodes = {};
     this.state = state;
     this.principalNode = new Vertex('PRINCIPAL');
-    this.terminalNode = new Vertex('TERMINAL');
-  }
-  addNode(v: Vertex): void {
-    this.nodes[v.value] = v;
+    this.terminalNode = new Vertex('END OF LINE');
   }
   updateStateWithLine(line: string): void {
     const normalize = this.makeNormalizeFn();
@@ -64,21 +58,29 @@ class Markov {
       return acc;
     }, []);
   }
+  generate(): string {
+    const list: Vertex[] = [];
+    let curNode = this.principalNode;
+    while (curNode.id != this.terminalNode.id) { // we'll stop when we reach the terminal node
+      const { vertex, ok } = db.FindRandomVertexFrom(curNode);
+      if (ok) { //
+        list.push(vertex);
+        curNode = vertex;
+      }
+    }
+    return list.map(v => v.value).join(' ');
+  }
+  v
 }
 
-
-
-// splitOnPredicate works similar to String.split but instead of a regex or string,
-// it takes a predicate function. if the pred. returns true, we'll split
-// function splitOnPredicate(s: string, fn: (c: string) => boolean): string[] {
-//   return s.split('').reduce((acc: string[][], cur: string): string[][] => {
-//     return acc;
-//   }, []).map(s => s.join(''));
-// }
-
 const markovify = (corpus: string, state: Number): Markov => {
-  const m = new Markov(state);
-  return m;
+  const markov = new Markov(state);
+  const lines = corpus
+    .split('\n')
+    .map(l => l.trim())
+    .filter(l => l.length > 0)
+  lines.forEach(l => markov.updateStateWithLine(l))
+  return markov;
 }
 
 export default markovify;

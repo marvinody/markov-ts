@@ -1,3 +1,4 @@
+import db from './db';
 import markovify from './markov';
 const corpus = `
   there is a quick brown fox.
@@ -8,9 +9,10 @@ const corpus = `
   dog loves treats so much.
   so much of our time is spent doing silly things.
   the lazy dog jumped, because he loved using commands and questioning?
+  LUL LUL LUL LUL LUL
 `
 
 const markov = markovify(corpus, 1);
-console.log(markov.tokenize('how are you, friend?'.split(' ')));
-console.log(markov.tokenize('!!!'.split(' ')));
-console.log(markov.tokenize('we Kappa :)'.split(' ')));
+let text = markov.generate();
+let v = db.vertices[db.vertices.length - 1]
+console.log(text);

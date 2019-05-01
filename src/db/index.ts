@@ -26,12 +26,28 @@ class DB {
   UpsertEdge(from: Vertex, to: Vertex, initialWeight: number, updateIncrement: number): Edge {
     let edge = this.FindExistingEdge(from, to);
     if (edge === undefined) {
-      edge = new Edge(from, to, initialWeight);
+      edge = from.MakeEdgeTo(to, initialWeight);
       this.edges.push(edge);
     } else {
       edge.weight += updateIncrement;
     }
     return edge;
+  }
+
+  FindRandomVertexFrom(from: Vertex): { vertex: Vertex, ok: boolean } {
+    if (from.edgesFrom.length === 0) {
+      return { vertex: null, ok: false };
+    }
+    let min = Infinity;
+    let node: Vertex = null;
+    from.edgesFrom.forEach(e => {
+      const val = -Math.log(Math.random() / e.weight);
+      if (val < min) {
+        min = val;
+        node = e.to;
+      }
+    })
+    return { vertex: node, ok: true };
   }
 
 }

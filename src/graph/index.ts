@@ -29,12 +29,13 @@ class Vertex {
     this.edgesFrom = [];
   }
   // MakeEdgeTo will create an edge and add it to the vertices' edge array
-  MakeEdgeTo(to: Vertex, weight: number) {
+  MakeEdgeTo(to: Vertex, weight: number): Edge {
     const edge = new Edge(this, to, weight);
     // add the edge to both since we might need them.
     // Waste of space rn, but should help in db design for going backwards?
     this.edgesFrom.push(edge);
     to.edgesTo.push(edge);
+    return edge;
   }
 }
 
