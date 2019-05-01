@@ -38,6 +38,9 @@ class Markov {
     const r = /[^\w:]/
     return s.reduce((acc: string[], cur: string): string[] => {
       const splitWords = [];
+      if (cur.startsWith("http")) {
+        return acc;
+      }
       // use for with an empty success clause
       for (let idx = cur.search(r); idx > -1 && cur.length > 0;) {
         // pull related data around idx
@@ -73,10 +76,9 @@ class Markov {
 
 }
 
-const markovify = (corpus: string, state: Number): Markov => {
+const markovify = (corpus: string[], state: Number): Markov => {
   const markov = new Markov(state);
   const lines = corpus
-    .split('\n')
     .map(l => l.trim())
     .filter(l => l.length > 0)
   lines.forEach(l => markov.updateStateWithLine(l))

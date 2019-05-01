@@ -1,18 +1,17 @@
-import db from './db';
+const fs = require('fs');
 import markovify from './markov';
-const corpus = `
-  there is a quick brown fox.
-  the quick brown fox jumped over the lazy dog.
-  the lazy dog jumped over the quick brown fox.
-  the lazy dog loves cake.
-  dog loves treats.
-  dog loves treats so much.
-  so much of our time is spent doing silly things.
-  the lazy dog jumped, because he loved using commands and questioning?
-  LUL LUL LUL LUL LUL
-`
+const filename = process.argv[2]
+if (filename === undefined) {
+  throw Error("Need a filename to be passed to build corpus")
+}
 
+const corpus = JSON.parse(fs.readFileSync(filename, 'utf8')).map(tweet => tweet.text);
 const markov = markovify(corpus, 1);
 let text = markov.generate();
-let v = db.vertices[db.vertices.length - 1]
 console.log(text);
+
+console.log(markov.generate())
+console.log(markov.generate())
+console.log(markov.generate())
+console.log(markov.generate())
+console.log(markov.generate())
