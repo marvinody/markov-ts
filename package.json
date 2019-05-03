@@ -16,6 +16,8 @@
     "webpack-cli": "^3.3.1"
   },
   "dependencies": {
-    "@types/node": "^11.13.8"
+    "@types/node": "^11.13.8",
+    "@types/yargs": "^13.0.0",
+    "yargs": "^13.2.2"
   }
 }
