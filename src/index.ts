@@ -1,8 +1,9 @@
-const fs = require('fs');
-const readline = require('readline');
+const fs = require('fs').promises;
 import { once } from 'events';
 import * as yargs from 'yargs';
 import { Markov } from './markov';
+const readline = require('readline');
+
 
 let args = yargs.command(
   'create <FILE> [OUT]',
@@ -37,19 +38,17 @@ switch (command) {
     })();
     break;
   case 'say':
-    console.log('saying from: ', args.FILE)
+    console.log('loading from:', args.FILE);
+    (async function () {
+      await load(FILE);
+    })();
     break;
   default:
     console.log(command, args);
 }
 
 async function save(m: Markov, stateFilename: string) {
-  return new Promise((res, rej) => {
-    fs.writeFile(stateFilename, m.Serialize(), (err) => {
-      if (err) { rej(err) };
-      res();
-    })
-  })
+  await fs.writeFile(stateFilename, m.Serialize())
 }
 
 async function create(corpusFilename: string): Promise<Markov> {
@@ -66,10 +65,16 @@ async function create(corpusFilename: string): Promise<Markov> {
   }
 }
 
-function getReadStream(filename) {
+function getReadStream(filename: string) {
   const rl = readline.createInterface({
     input: fs.createReadStream(filename),
     crlfDelay: Infinity,
   })
   return rl;
+}
+
+async function load(corpusFilename: string): Promise<Markov> {
+  const rawData = await fs.readFile(corpusFilename, 'utf-8');
+  const data = JSON.parse(rawData);
+  return Markov.Deserialize(data);
 }
