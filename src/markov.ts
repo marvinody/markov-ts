@@ -85,4 +85,5 @@ const markovify = (corpus: string[], state: Number): Markov => {
   return markov;
 }
 
-export default markovify;
+export { markovify, Markov };
+
