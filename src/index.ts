@@ -68,10 +68,3 @@ function getReadStream(filename) {
   })
   return rl;
 }
-
-
-/*
-const corpus = JSON.parse(fs.readFileSync(filename, 'utf8')).map(tweet => tweet.text);
-const markov = markovify(corpus, 1);
-let text = markov.generate();
-*/

@@ -73,6 +73,18 @@ class Markov {
     }
     return list.map(v => v.value).join(' ');
   }
+  Serialize(): string {
+    return JSON.stringify({
+      state: this.state,
+      start: [this.principalNode.id, this.principalNode.value],
+      end: [this.terminalNode.id, this.terminalNode.value],
+      nodes: db.vertices.map(v => [v.id, v.value]),
+      edges: db.edges.map(e => [e.from.id, e.to.id, e.weight]),
+    })
+  }
+  static Deserialize(s: string): Markov {
+    return new Markov(1);
+  }
 
 }
 
