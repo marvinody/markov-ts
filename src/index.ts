@@ -32,8 +32,8 @@ switch (command) {
   case 'create':
     console.log(`Creating markov on corpus:'${FILE}' and saving to ${OUT}`);
     (async function () {
-      const markov = await create(FILE, OUT);
-      await save(markov);
+      const markov = await create(FILE);
+      await save(markov, OUT);
     })();
     break;
   case 'say':
@@ -43,11 +43,16 @@ switch (command) {
     console.log(command, args);
 }
 
-async function save(m: Markov) {
-
+async function save(m: Markov, stateFilename: string) {
+  return new Promise((res, rej) => {
+    fs.writeFile(stateFilename, m.Serialize(), (err) => {
+      if (err) { rej(err) };
+      res();
+    })
+  })
 }
 
-async function create(corpusFilename: string, stateFilename: string): Promise<Markov> {
+async function create(corpusFilename: string): Promise<Markov> {
   try {
     const m = new Markov(2);
     const stream = getReadStream(corpusFilename);
