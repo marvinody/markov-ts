@@ -40,7 +40,8 @@ switch (command) {
   case 'say':
     console.log('loading from:', args.FILE);
     (async function () {
-      await load(FILE);
+      const m = await load(FILE);
+      m.generate();
     })();
     break;
   default:

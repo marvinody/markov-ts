@@ -1,4 +1,5 @@
 import { Edge, Vertex } from '../graph';
+import id from '../graph/id';
 class DB {
   vertices: Vertex[]
   edges: Edge[]
@@ -48,6 +49,9 @@ class DB {
       }
     })
     return { vertex: node, ok: true };
+  }
+  SetAutoIncrement(n: number) {
+    id.set(n);
   }
 
 }

@@ -1,5 +1,5 @@
-import newID from './id';
-
+import IDGen from './id';
+const newID = IDGen.newID;
 class Edge {
   id: number
   from: Vertex;

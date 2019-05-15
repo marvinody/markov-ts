@@ -1,7 +1,7 @@
 import db from './db';
 import { Vertex } from './graph';
 class Markov {
-  state: Number;
+  state: number;
   principalNode: Vertex;
   terminalNode: Vertex;
   constructor(state) {
@@ -73,21 +73,55 @@ class Markov {
     }
     return list.map(v => v.value).join(' ');
   }
-  Serialize(): string {
-    return JSON.stringify({
+  Serialize(): SerializedMarkov {
+    return {
       state: this.state,
       start: [this.principalNode.id, this.principalNode.value],
       end: [this.terminalNode.id, this.terminalNode.value],
       nodes: db.vertices.map(v => [v.id, v.value]),
       edges: db.edges.map(e => [e.from.id, e.to.id, e.weight]),
-    })
+    }
   }
-  static Deserialize(s: string): Markov {
-    return new Markov(1);
+  static Deserialize(o: SerializedMarkov): Markov {
+    const m = new Markov(o.state);
+    // grab principal stuff
+    const principal = new Vertex(o.start[1]);
+    principal.id = o.start[0];
+    // grab terminal stuff
+    const terminal = new Vertex(o.end[1]);
+    terminal.id = o.end[0];
+    // set the important nodes
+    m.principalNode = principal;
+    m.terminalNode = terminal;
+    // id -> vertex
+    const idMap: { [key: number]: Vertex; } = {};
+    idMap[principal.id] = principal;
+    idMap[terminal.id] = terminal;
+    // create vertices for everything
+    db.vertices = db.vertices.concat(o.nodes.map(([id, value]) => {
+      let v = new Vertex(value);
+      v.id = id;
+      idMap[id] = v;
+      return v;
+    }))
+    db.edges = o.edges.map(([fromID, toID, weight]) => {
+      const from = idMap[fromID];
+      const to = idMap[toID];
+      return from.MakeEdgeTo(to, weight)
+    });
+    db.SetAutoIncrement(db.edges.length + db.vertices.length);
+    return m;
   }
-
 }
-
+type SerializedNode = [number, string]
+type SerializedEdge = [number, number, number];
+type SerializedMarkov = {
+  state: number,
+  start: SerializedNode,
+  end: SerializedNode,
+  nodes: Array<SerializedNode>,
+  edges: Array<SerializedEdge>,
+}
 const markovify = (corpus: string[], state: Number): Markov => {
   const markov = new Markov(state);
   const lines = corpus
