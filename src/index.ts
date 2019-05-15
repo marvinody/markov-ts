@@ -41,11 +41,12 @@ switch (command) {
     console.log('loading from:', args.FILE);
     (async function () {
       const m = await load(FILE);
-      m.generate();
+      const s = m.generate();
+      console.log(s);
     })();
     break;
   default:
-    console.log(command, args);
+    console.log('use me with --help');
 }
 
 async function save(m: Markov, stateFilename: string) {
